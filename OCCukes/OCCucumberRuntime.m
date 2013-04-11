@@ -176,30 +176,36 @@
 	// second array element specifies the parameters, a hash or array depending
 	// on the message. Demultiplex the JSON request and invoke the corresponding
 	// handler.
-	NSString *line = [streamPair receiveLineUsingEncoding:NSUTF8StringEncoding];
-	if (line)
-	{
-		NSError *__autoreleasing error = nil;
-		id object = [NSJSONSerialization JSONObjectWithData:[line dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
-		if (object)
-		{
-			id result = [self handleWirePacketWithObject:object];
-			// Always answer with something whenever the request decodes valid
-			// JSON. Send valid JSON back because at the other end of the
-			// connection likely sits a Cucumber instance. Send a Cucumber
-			// wire-protocol failure packet.
-			if (result == nil)
-			{
-				result = [NSArray arrayWithObject:@"fail"];
-			}
-			NSData *data = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
-			if (data)
-			{
-				[streamPair sendBytes:data];
-				[streamPair sendBytes:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
-			}
-		}
-	}
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+        NSString *line = [streamPair receiveLineUsingEncoding:NSUTF8StringEncoding];
+        if (line)
+        {
+            NSError *__autoreleasing error = nil;
+            id object = [NSJSONSerialization JSONObjectWithData:[line dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+            if (object)
+            {
+                id result = [self handleWirePacketWithObject:object];
+                // Always answer with something whenever the request decodes valid
+                // JSON. Send valid JSON back because at the other end of the
+                // connection likely sits a Cucumber instance. Send a Cucumber
+                // wire-protocol failure packet.
+                if (result == nil)
+                {
+                    result = [NSArray arrayWithObject:@"fail"];
+                }
+                NSData *data = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
+                NSMutableData *mutableData = [[NSMutableData alloc] initWithData:data];
+                if (data) 
+                {
+                    dispatch_sync(dispatch_get_main_queue(), ^{
+                        [mutableData appendData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+                        [streamPair sendBytes:mutableData];
+                    });
+                }
+            }
+        }
+    });
+
 }
 
 - (void)streamPair:(CFStreamPair *)streamPair handleRequestEvent:(NSStreamEvent)eventCode

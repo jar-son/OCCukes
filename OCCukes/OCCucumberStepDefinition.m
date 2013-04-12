@@ -44,6 +44,14 @@
 
 - (id)initWithPattern:(NSString *)pattern block:(void (^)(NSArray *arguments))block
 {
+    if (![pattern hasPrefix:@"^"] ) {
+        pattern = [@"^" stringByAppendingString:pattern];
+    }
+
+    if (![pattern hasSuffix:@"$"]){
+        pattern = [pattern stringByAppendingString:@"$"];
+    }
+
 	NSError *__autoreleasing error = nil;
 	NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:pattern options:0 error:&error];
 	// What to do with the error if the expression compiler raises one?

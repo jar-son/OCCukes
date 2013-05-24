@@ -176,7 +176,7 @@
 	// second array element specifies the parameters, a hash or array depending
 	// on the message. Demultiplex the JSON request and invoke the corresponding
 	// handler.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+    dispatch_async(dispatch_queue_create("com.occukes.scenario", 0), ^{
         NSString *line = [streamPair receiveLineUsingEncoding:NSUTF8StringEncoding];
         if (line)
         {

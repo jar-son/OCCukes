@@ -249,7 +249,6 @@
 				78791DF11590EF3100C09841 /* CFSockets.xcodeproj */,
 				78A9B8691589E14900FEFFA8 /* OCCukes */,
 				78A9B87F1589E14900FEFFA8 /* OCCukesTests */,
-				78A9B8621589E14900FEFFA8 /* Frameworks */,
 				78A9B8611589E14900FEFFA8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -275,6 +274,7 @@
 				78A9B8651589E14900FEFFA8 /* Other Frameworks */,
 			);
 			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		78A9B8651589E14900FEFFA8 /* Other Frameworks */ = {
@@ -313,6 +313,7 @@
 				78A6FCC315CD04EB00711A87 /* OCCucumberSenTestProbe.m */,
 				788046E3158A244E00881CEA /* Versioning.h */,
 				788046E4158A244E00881CEA /* Versioning.m */,
+				78A9B8621589E14900FEFFA8 /* Frameworks */,
 				78A9B86A1589E14900FEFFA8 /* Supporting Files */,
 			);
 			path = OCCukes;

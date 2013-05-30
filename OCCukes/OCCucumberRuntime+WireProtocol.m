@@ -196,6 +196,9 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
 			}
 			@catch (NSException *exception)
 			{
+                if (self.afterScenarioCompletionBlock) {
+                    self.afterScenarioCompletionBlock();
+                }
 				result = [NSArray arrayWithObjects:@"fail", [NSDictionary dictionaryWithObjectsAndKeys:[exception reason], @"message", [exception name], @"exception", nil], nil];
 			}
 			@catch (id object)

@@ -75,6 +75,8 @@
 	{
 		[self setConnectTimeout:10.0];
 		[self setDisconnectTimeout:1.0];
+        self.scenarioQueue = [NSOperationQueue new];
+        self.scenarioQueue.maxConcurrentOperationCount = 1;
 	}
 	return self;
 }
@@ -176,7 +178,7 @@
 	// second array element specifies the parameters, a hash or array depending
 	// on the message. Demultiplex the JSON request and invoke the corresponding
 	// handler.
-    dispatch_async(dispatch_queue_create("com.occukes.scenario", 0), ^{
+    [self.scenarioQueue addOperationWithBlock:^{
         NSString *line = [streamPair receiveLineUsingEncoding:NSUTF8StringEncoding];
         if (line)
         {
@@ -195,7 +197,7 @@
                 }
                 NSData *data = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
                 NSMutableData *mutableData = [[NSMutableData alloc] initWithData:data];
-                if (data) 
+                if (data)
                 {
                     dispatch_sync(dispatch_get_main_queue(), ^{
                         [mutableData appendData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
@@ -204,7 +206,7 @@
                 }
             }
         }
-    });
+    }];
 
 }
 

@@ -36,6 +36,11 @@
 @property(strong, NS_NONATOMIC_IOSONLY) OCCucumberLanguage *language;
 @property(assign, NS_NONATOMIC_IOSONLY) NSTimeInterval connectTimeout;
 @property(assign, NS_NONATOMIC_IOSONLY) NSTimeInterval disconnectTimeout;
+@property (nonatomic, strong) NSOperationQueue *scenarioQueue;
+
+typedef void(^block)(void);
+@property (nonatomic, copy) block afterScenarioCompletionBlock;
+@property (nonatomic, copy) block beforeScenarioCompletionBlock;
 
 /*!
  * @brief Date when the runtime expires.

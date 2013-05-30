@@ -146,6 +146,10 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
 
 - (id)handleBeginScenario
 {
+    if (self.beforeScenarioCompletionBlock) {
+        self.beforeScenarioCompletionBlock();
+    }
+    
 	[[self language] beginScenario];
 	return [NSArray arrayWithObject:@"success"];
 }
@@ -157,6 +161,9 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
 
 - (id)handleEndScenario
 {
+    if (self.afterScenarioCompletionBlock) {
+        self.afterScenarioCompletionBlock();
+    }
 	[[self language] endScenario];
 	return [NSArray arrayWithObject:@"success"];
 }

@@ -178,7 +178,7 @@
 	// second array element specifies the parameters, a hash or array depending
 	// on the message. Demultiplex the JSON request and invoke the corresponding
 	// handler.
-    [self.scenarioQueue addOperationWithBlock:^{
+    dispatch_async(dispatch_queue_create("com.occuckes.scenario", 0),^{
         NSString *line = [streamPair receiveLineUsingEncoding:NSUTF8StringEncoding];
         if (line)
         {
@@ -194,19 +194,23 @@
                 if (result == nil)
                 {
                     result = [NSArray arrayWithObject:@"fail"];
+                    if (self.afterScenarioCompletionBlock) {
+                        self.afterScenarioCompletionBlock();
+                    }
                 }
+                NSLog(@"object: %@, result: %@",object, result);
                 NSData *data = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
                 NSMutableData *mutableData = [[NSMutableData alloc] initWithData:data];
                 if (data)
                 {
+                    [mutableData appendData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        [mutableData appendData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
                         [streamPair sendBytes:mutableData];
                     });
                 }
             }
         }
-    }];
+    });
 
 }
 

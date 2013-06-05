@@ -198,7 +198,6 @@
                         self.afterScenarioCompletionBlock();
                     }
                 }
-                NSLog(@"object: %@, result: %@",object, result);
                 NSData *data = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
                 NSMutableData *mutableData = [[NSMutableData alloc] initWithData:data];
                 if (data)

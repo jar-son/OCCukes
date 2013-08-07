@@ -191,13 +191,14 @@
                 // JSON. Send valid JSON back because at the other end of the
                 // connection likely sits a Cucumber instance. Send a Cucumber
                 // wire-protocol failure packet.
-                if (result == nil)
+                if (result == nil || [result count] < 1)
                 {
                     result = [NSArray arrayWithObject:@"fail"];
                     if (self.afterScenarioCompletionBlock) {
                         self.afterScenarioCompletionBlock();
                     }
                 }
+                
                 NSData *data = [NSJSONSerialization dataWithJSONObject:result options:0 error:&error];
                 NSMutableData *mutableData = [[NSMutableData alloc] initWithData:data];
                 if (data)

@@ -102,7 +102,10 @@
 	NSMutableArray *values = [NSMutableArray array];
 	for (OCCucumberStepArgument *stepArgument in [stepMatch stepArguments])
 	{
-		[values addObject:[stepArgument value]];
+        if ([stepArgument value]) {
+            [values addObject:[stepArgument value]];
+        }
+		
 	}
 	if (arguments)
 	{

@@ -200,11 +200,16 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
 			}
 			@catch (id object)
 			{
+                NSLog(@"%s - catch ( id object) %@",__PRETTY_FUNCTION__,object);
 				result = object;
 			}
 			break;
 		}
 	}
+    
+    if (!result) {
+        result =  @[@"fail",@{ @"message" : @"I don't know what happened here" }];
+    }
 	return result;
 }
 

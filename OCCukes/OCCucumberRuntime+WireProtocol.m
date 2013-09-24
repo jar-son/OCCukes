@@ -104,6 +104,8 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
 {
 	NSMutableArray *stepMatches = [NSMutableArray array];
 	NSString *nameToMatch = [hash objectForKey:@"name_to_match"];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OCCukesBeginStep" object:nameToMatch];
 	for (OCCucumberStepMatch *match in [[self language] stepMatches:nameToMatch])
 	{
 		OCCucumberStepDefinition *stepDefinition = [match stepDefinition];
@@ -120,6 +122,7 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
 		NSString *source = file ? [NSString stringWithFormat:@"%s:%u", file, [stepDefinition line]] : nil;
 		[stepMatches addObject:[NSDictionary dictionaryWithObjectsAndKeys:[stepDefinition identifierString], @"id", args, @"args", source, @"source", nil]];
 	}
+    
 	return [NSArray arrayWithObjects:@"success", [stepMatches copy], nil];
 }
 
@@ -151,6 +154,7 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
     }
     
 	[[self language] beginScenario];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OCCukesBeginStep" object:@"Begin Scenario:"];
 	return [NSArray arrayWithObject:@"success"];
 }
 
@@ -165,6 +169,8 @@ NSString *__OCCucumberRuntimeCamelize(NSString *string);
         self.afterScenarioCompletionBlock();
     }
 	[[self language] endScenario];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"OCCukesBeginStep" object:@"\n"];
+
 	return [NSArray arrayWithObject:@"success"];
 }
 

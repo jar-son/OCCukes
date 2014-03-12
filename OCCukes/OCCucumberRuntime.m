@@ -179,6 +179,8 @@
 	// on the message. Demultiplex the JSON request and invoke the corresponding
 	// handler.
     dispatch_async(dispatch_queue_create("com.occuckes.scenario", 0),^{
+        
+        NSDate *start = [NSDate date];
         NSString *line = [streamPair receiveLineUsingEncoding:NSUTF8StringEncoding];
         if (line)
         {
@@ -204,14 +206,34 @@
                 if (data)
                 {
                     [mutableData appendData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
+                    
                     dispatch_sync(dispatch_get_main_queue(), ^{
-                        [streamPair sendBytes:mutableData];
+                        
+                        NSDate *end = [NSDate date];
+                        
+                        if (end.timeIntervalSince1970 - start.timeIntervalSince1970 < [self timeout])
+                        {
+                            [streamPair sendBytes:mutableData];
+                        }
                     });
                 }
             }
         }
     });
 
+}
+
+- (NSUInteger)timeout
+{
+    NSUInteger timeout = 170;
+    
+    if (getenv("INVOKE_TIMEOUT"))
+    {
+        NSString *invokeTimeout = [[NSString alloc] initWithUTF8String:getenv("INVOKE_TIMEOUT")];
+        timeout = [invokeTimeout integerValue];
+    }
+    
+    return timeout;
 }
 
 - (void)streamPair:(CFStreamPair *)streamPair handleRequestEvent:(NSStreamEvent)eventCode
